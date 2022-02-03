@@ -1,0 +1,32 @@
+{
+  "products": {
+
+    "1": {
+      "name": "Hlava 22",
+      "description": "zolova velka hlava",
+      "price": 35.74,
+      "quantity": 1,
+      "categories": [
+        1
+      ]
+    },
+    "2": {
+      "name": "Hlava 32",
+      "description": "zolova velka hlava",
+      "price": 25.64,
+      "quantity": 2,
+      "categories": [
+        1
+      ]
+    },
+    "3": {
+      "name": "Hlava 42",
+      "description": "zolova velka hlava",
+      "price": 45.64,
+      "quantity": 3,
+      "categories": [
+        1
+      ]
+    }
+  }
+}
