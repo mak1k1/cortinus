@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block body %}
-    <h1>Hi world</h1>
+
     <ul>
     {% for product in object_list %}
        <li>
@@ -10,4 +10,7 @@
        </li>
     {% endfor %}
     </ul>
+
+    {% include './categories_sidebar.html' %}
+
 {% endblock %}

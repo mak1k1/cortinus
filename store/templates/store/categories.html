@@ -1,0 +1,10 @@
+{% for category in parent_categories %}
+       <li>
+       {{ category.name }}
+       {% if category.children.all|length %}
+           <ul>
+{#            {% include './categories.html' with parent_categories=category.children.all %}#}
+           </ul>
+       {% endif %}
+       </li>
+{% endfor %}
