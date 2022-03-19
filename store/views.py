@@ -8,6 +8,6 @@ class HomeView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['parent_categories'] = Category.objects.all()
+        context['categories'] = Category.objects.all()
         return context
 
