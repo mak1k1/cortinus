@@ -4,8 +4,8 @@
     <ul>
     {% for product in object_list %}
        <li>
-       <h2>{{ product.name }}</h2>
-       <h4>{{ product.description }}</h4>
+       <h2>{{ product.book.name }}</h2>
+       <h4>{{ product.book.description }}</h4>
        <h4>{{ product.price }}</h4>
        </li>
     {% endfor %}
