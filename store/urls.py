@@ -4,4 +4,5 @@ from .views import HomeView
 
 urlpatterns = [
     path('', HomeView.as_view()),
+    path('<slug:category_slug>', HomeView.as_view())
 ]
