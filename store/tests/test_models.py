@@ -1,6 +1,6 @@
 from django.test import TestCase
 from books.models import Author, Category, Book
-from store.models import Language, Product, Publisher
+from store.models import Language, Product, Publisher, Order, OrderItem
 
 
 class StoreModelsTests(TestCase):
@@ -23,7 +23,6 @@ class StoreModelsTests(TestCase):
             description='Fiction books'
         )])
 
-
     def test_creating_language(self):
         """Test creating Language is successful and string representation is returned"""
         language = Language.objects.create(
@@ -43,10 +42,33 @@ class StoreModelsTests(TestCase):
     def test_creating_product(self):
         """Test creating Product is successful and string representation is returned"""
         product = Product.objects.create(
-            price = 14.99,
-            language = Language.objects.create(code='sk', name='Slovak'),
-            publisher = Publisher.objects.create(name='publisher', description='publisher description'),
-            book = self.book,
-            stock_count = 15,
+            price=14.99,
+            language=Language.objects.create(code='sk', name='Slovak'),
+            publisher=Publisher.objects.create(
+                name='publisher', description='publisher description'),
+            book=self.book,
+            stock_count=15,
         )
         self.assertEqual(str(product), str(product.book))
+
+    def test_creating_order(self):
+        """Test creating Order is successful and string representation is returned"""
+        order = Order.objects.create(
+        )
+        self.assertEqual(str(order), str(order.created_at))
+
+    def test_creating_orderitem(self):
+        """Test creating Order is successful and string representation is returned"""
+        product = Product.objects.create(
+            price=14.99,
+            language=Language.objects.create(code='sk', name='Slovak'),
+            publisher=Publisher.objects.create(
+                name='publisher', description='publisher description'),
+            book=self.book,
+            stock_count=15,
+        )
+
+        order_item = OrderItem.objects.create(
+            product=product
+        )
+        self.assertEqual(str(order_item), str(product))
