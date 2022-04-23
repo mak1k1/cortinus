@@ -4,6 +4,16 @@ import graphene
 from .models import Address, User
 from .types import AddressType, UserType
 
+def get_address_set(addresses):
+    if addresses is not None:
+        address_set = []
+        for address_id in addresses:
+            address_object = Address.object.get(pk=address_id)
+            address_set.append(address_object)
+
+        return address_set
+    return None
+
 
 class CreateUserMutation(graphene.Mutation):
     class Arguments:
@@ -32,7 +42,9 @@ class CreateUserMutation(graphene.Mutation):
             is_staff=is_staff,
             avatar=avatar,
         )
-        user.addresses.set(addresses)
+        user.addresses.set(get_address_set(addresses))
+
+        
 
         user.save()
         return CreateUserMutation(user=user)
@@ -71,7 +83,7 @@ class EditUserMutation(graphene.Mutation):
             user.avatar = avatar
 
         if addresses is not None:
-            user.addresses = addresses
+            user.addresses.set(get_address_set(addresses))
 
         user.save()
         return EditUserMutation(user=user)
