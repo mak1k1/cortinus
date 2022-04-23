@@ -35,10 +35,14 @@ class CreateUserMutation(graphene.Mutation):
         return CreateUserMutation(user=user)
 
 
-class EditUserMutation(graphene.Mutation):
+class UpdateUserMutation(graphene.Mutation):
     class Arguments:
         """Input arguments for editing User"""
         id = graphene.ID(required=True)
+        first_name = graphene.String(required=False)
+        last_name = graphene.String(required=False)
+        is_staff = graphene.String(required=False)
+        avatar = graphene.String(required=False)
 
     user = graphene.Field(UserType)
 
@@ -48,7 +52,6 @@ class EditUserMutation(graphene.Mutation):
         last_name = kwargs.get('last_name', None)
         is_staff = kwargs.get('is_staff', None)
         avatar = kwargs.get('avatar', None)
-        addresses = kwargs.get('addresses', None)
 
         user = User.objects.get(pk=id)
 
@@ -67,16 +70,13 @@ class EditUserMutation(graphene.Mutation):
         if avatar is not None:
             user.avatar = avatar
 
-        if addresses is not None:
-            user.addresses.set(get_address_set(addresses))
-
         user.save()
-        return EditUserMutation(user=user)
+        return UpdateUserMutation(user=user)
 
 
 class CreateAddressMutation(graphene.Mutation):
     class Arguments:
-        """Input arguments for editing User"""
+        """Input arguments for creating Address"""
         full_name = graphene.String()
         street = graphene.String()
         zip_code = graphene.String()
@@ -98,3 +98,43 @@ class CreateAddressMutation(graphene.Mutation):
         )
 
         return CreateAddressMutation(address=address)
+
+
+class UpdateAddressMutation(graphene.Mutation):
+    class Arguments:
+        """Input arguments for editing Address"""
+        id = graphene.ID(required=True)
+        full_name = graphene.String(required=False)
+        street = graphene.String(required=False)
+        zip_code = graphene.String(required=False)
+        city = graphene.String(required=False)
+        country = graphene.String(required=False)
+
+    address = graphene.Field(AddressType)
+
+    def mutate(self, info, id, **kwargs):
+        full_name = kwargs.get('full_name', None)
+        street = kwargs.get('street', None)
+        zip_code = kwargs.get('zip_code', None)
+        city = kwargs.get('city', None)
+        country = kwargs.get('country', None)
+
+        address = Address.objects.get(pk=id)
+
+        if full_name is not None:
+            address.full_name = full_name
+
+        if street is not None:
+            address.street = street
+
+        if zip_code is not None:
+            address.zip_code = zip_code
+
+        if city is not None:
+            address.city = city
+
+        if country is not None:
+            address.country = country
+
+        address.save()
+        return UpdateAddressMutation(address=address)
