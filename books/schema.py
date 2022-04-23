@@ -35,8 +35,8 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    create_author = graphene.Field(CreateAuthorMutation)
-    update_author = graphene.Field(EditAuthorMutation)
+    create_author = CreateAuthorMutation.Field()
+    update_author = EditAuthorMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
