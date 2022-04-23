@@ -17,7 +17,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('staff'), default=False)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
-    addresses = models.ManyToManyField("Address", blank=True)
 
     objects = UserManager()
 
@@ -54,6 +53,7 @@ class Address(models.Model):
     zip_code = models.CharField(max_length=12)
     city = models.CharField(max_length=100)
     country = models.CharField(max_length=50)
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
 
     def __str__(self):
         address = '%s, %s %s' % (self.street, self.zip_code, self.city)

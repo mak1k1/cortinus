@@ -4,16 +4,6 @@ import graphene
 from .models import Address, User
 from .types import AddressType, UserType
 
-def get_address_set(addresses):
-    if addresses is not None:
-        address_set = []
-        for address_id in addresses:
-            address_object = Address.object.get(pk=address_id)
-            address_set.append(address_object)
-
-        return address_set
-    return None
-
 
 class CreateUserMutation(graphene.Mutation):
     class Arguments:
@@ -23,7 +13,6 @@ class CreateUserMutation(graphene.Mutation):
         last_name = graphene.String(required=False)
         is_staff = graphene.Boolean(required=False)
         avatar = graphene.String(required=False)
-        addresses = graphene.List(graphene.ID, required=False)
 
     user = graphene.Field(UserType)
 
@@ -33,7 +22,6 @@ class CreateUserMutation(graphene.Mutation):
         last_name = kwargs.get('last_name', "")
         is_staff = kwargs.get('is_staff', False)
         avatar = kwargs.get('avatar', None)
-        addresses = kwargs.get('addresses', [])
 
         user = User.objects.create(
             email=email,
@@ -42,9 +30,6 @@ class CreateUserMutation(graphene.Mutation):
             is_staff=is_staff,
             avatar=avatar,
         )
-        user.addresses.set(get_address_set(addresses))
-
-        
 
         user.save()
         return CreateUserMutation(user=user)
@@ -87,3 +72,29 @@ class EditUserMutation(graphene.Mutation):
 
         user.save()
         return EditUserMutation(user=user)
+
+
+class CreateAddressMutation(graphene.Mutation):
+    class Arguments:
+        """Input arguments for editing User"""
+        full_name = graphene.String()
+        street = graphene.String()
+        zip_code = graphene.String()
+        city = graphene.String()
+        country = graphene.String()
+        user_id = graphene.Int(required=True, name='user')
+
+    address = graphene.Field(AddressType)
+
+    def mutate(self, info, full_name, street, zip_code, city, country, user_id):
+        user = User.objects.get(pk=user_id)
+        address = Address.objects.create(
+            full_name=full_name,
+            street=street,
+            zip_code=zip_code,
+            city=city,
+            country=country,
+            user=user
+        )
+
+        return CreateAddressMutation(address=address)
