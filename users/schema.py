@@ -1,4 +1,6 @@
 import graphene
+
+from users.mutations import CreateUserMutation, EditUserMutation
 from .models import Address, User
 from .types import AddressType, UserType
 
@@ -24,7 +26,8 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    pass
+    create_user = CreateUserMutation.Field()
+    update_user = EditUserMutation.Field()
 
 
 schema = graphene.Schema(query=Query)
