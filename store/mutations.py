@@ -110,3 +110,43 @@ class UpdateOrderMutation(graphene.Mutation):
         order.save()
         return UpdateOrderMutation(order=order)
 
+
+class CreatePublisherMutation(graphene.Mutation):
+    """Input arguments for creating Publisher"""
+    class Arguments:
+        name = graphene.String()
+        description = graphene.String()
+    
+    publisher = graphene.Field(PublisherType)
+
+    def mutate(self, info, name, description):
+        publisher = Publisher.objects.create(
+            name=name,
+            description=description
+        )
+        return CreatePublisherMutation(publisher=publisher)
+
+class UpdatePublisherMutation(graphene.Mutation):
+    """Input arguments for updating Publisher"""
+    class Arguments:
+        id = graphene.ID()
+        name = graphene.String(required=False)
+        description = graphene.String(required=False)
+
+    publisher = graphene.Field(PublisherType)
+
+    def mutate(self, info, id, **kwargs):
+        name = kwargs.get('name', None)
+        description = kwargs.get('description', None)
+
+        publisher = Publisher.objects.get(pk=id)
+
+        if description is not None:
+            publisher.description = description
+
+        if name is not None:
+            publisher.name = name
+
+
+        publisher.save()
+        return UpdatePublisherMutation(publisher=publisher)
