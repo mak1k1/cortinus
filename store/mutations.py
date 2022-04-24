@@ -203,9 +203,9 @@ class UpdateProductMutation(graphene.Mutation):
 
     def mutate(self, info, id, **kwargs):
         price = kwargs.get('price', None)
-        language_id = kwargs.get('language', None)
-        publisher_id = kwargs.get('publisher', None)
-        book_id = kwargs.get('book', None)
+        language_id = kwargs.get('language_id', None)
+        publisher_id = kwargs.get('publisher_id', None)
+        book_id = kwargs.get('book_id', None)
         stock_count = kwargs.get('stock_count', None)
 
         product = Product.objects.get(pk=id)
