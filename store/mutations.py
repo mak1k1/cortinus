@@ -239,3 +239,78 @@ class UpdateProductMutation(graphene.Mutation):
 
         product.save()
         return UpdateProductMutation(product=product)
+
+
+class CreateOrderItemMutation(graphene.Mutation):
+    """Input arguments for creating OrderItem"""
+    class Arguments:
+        product_id = graphene.Int(name='product')
+        order_id = graphene.Int(name='order')
+        qty = graphene.Int()
+        image = graphene.String()
+
+    orderitem = graphene.Field(OrderItemType)
+
+    def mutate(self, info, product_id, order_id, qty,  image):
+        try:
+            product = Product.objects.get(pk=product_id)
+        except Product.DoesNotExist:
+            product = None
+
+        try:
+            order = Order.objects.get(pk=order_id)
+        except Order.DoesNotExist:
+            order = None
+
+        orderitem = OrderItem.objects.create(
+            qty=qty,
+            image=image,
+            product=product,
+            order=order
+        )
+
+        return CreateOrderItemMutation(orderitem=orderitem)
+
+
+class UpdateOrderItemMutation(graphene.Mutation):
+    """Input arguments for updating OrderItem"""
+    class Arguments:
+        id = graphene.ID()
+        product_id = graphene.Int(name='product', required=False)
+        order_id = graphene.Int(name='order', required=False)
+        qty = graphene.Int(required=False)
+        image = graphene.String(required=False)
+
+    orderitem = graphene.Field(OrderItemType)
+
+    def mutate(self, info, id, **kwargs):
+        product_id = kwargs.get('product_id', None)
+        order_id = kwargs.get('order_id', None)
+        qty = kwargs.get('qty', None)
+        image = kwargs.get('image', None)
+
+        orderitem = OrderItem.objects.get(pk=id)
+
+        if qty is not None:
+            orderitem.qty = qty
+
+        if image is not None:
+            orderitem.image = image
+
+        if product_id is not None:
+            try:
+                product = Product.objects.get(pk=product_id)
+            except Product.DoesNotExist:
+                product = None
+            orderitem.product = product
+
+        if order_id is not None:
+            try:
+                order = Order.objects.get(pk=order_id)
+            except Order.DoesNotExist:
+                order = None
+            orderitem.order = order
+
+
+        orderitem.save()
+        return UpdateOrderItemMutation(orderitem=orderitem)
