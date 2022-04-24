@@ -1,6 +1,7 @@
 import graphene
 from .models import Language, Order, OrderItem, Product, Publisher
 from users.models import User
+from books.models import Book
 from .types import LanguageType, OrderType, OrderItemType, ProductType, PublisherType
 
 
@@ -9,7 +10,7 @@ class CreateLanguageMutation(graphene.Mutation):
     class Arguments:
         code = graphene.String()
         name = graphene.String()
-    
+
     language = graphene.Field(LanguageType)
 
     def mutate(self, info, code, name):
@@ -18,6 +19,7 @@ class CreateLanguageMutation(graphene.Mutation):
             name=name
         )
         return CreateLanguageMutation(language=language)
+
 
 class UpdateLanguageMutation(graphene.Mutation):
     """Input arguments for updating Language"""
@@ -40,7 +42,6 @@ class UpdateLanguageMutation(graphene.Mutation):
         if name is not None:
             language.name = name
 
-
         language.save()
         return UpdateLanguageMutation(language=language)
 
@@ -49,7 +50,7 @@ class CreateOrderMutation(graphene.Mutation):
     """Input arguments for creating Language"""
     class Arguments:
         user_id = graphene.Int(required=False, name='user')
-    
+
     order = graphene.Field(OrderType)
 
     def mutate(self, info, **kwargs):
@@ -105,7 +106,6 @@ class UpdateOrderMutation(graphene.Mutation):
                 user = None
 
             order.user = user
-            
 
         order.save()
         return UpdateOrderMutation(order=order)
@@ -116,7 +116,7 @@ class CreatePublisherMutation(graphene.Mutation):
     class Arguments:
         name = graphene.String()
         description = graphene.String()
-    
+
     publisher = graphene.Field(PublisherType)
 
     def mutate(self, info, name, description):
@@ -125,6 +125,7 @@ class CreatePublisherMutation(graphene.Mutation):
             description=description
         )
         return CreatePublisherMutation(publisher=publisher)
+
 
 class UpdatePublisherMutation(graphene.Mutation):
     """Input arguments for updating Publisher"""
@@ -147,6 +148,94 @@ class UpdatePublisherMutation(graphene.Mutation):
         if name is not None:
             publisher.name = name
 
-
         publisher.save()
         return UpdatePublisherMutation(publisher=publisher)
+
+
+class CreateProductMutation(graphene.Mutation):
+    """Input arguments for creating Publisher"""
+    class Arguments:
+        price = graphene.String()
+        language_id = graphene.Int(name='language')
+        publisher_id = graphene.Int(name='publisher')
+        book_id = graphene.Int(name='book')
+        stock_count = graphene.Int()
+
+    product = graphene.Field(ProductType)
+
+    def mutate(self, info, price, language_id, publisher_id, book_id, stock_count):
+        try:
+            language = Language.objects.get(pk=language_id)
+        except Language.DoesNotExist:
+            language = None
+
+        try:
+            publisher = Publisher.objects.get(pk=publisher_id)
+        except Publisher.DoesNotExist:
+            publisher = None
+
+        try:
+            book = Book.objects.get(pk=book_id)
+        except Book.DoesNotExist:
+            book = None
+
+        product = Product.objects.create(
+            price=price,
+            language=language,
+            publisher=publisher,
+            book=book,
+            stock_count=stock_count,
+        )
+        return CreateProductMutation(product=product)
+
+
+class UpdateProductMutation(graphene.Mutation):
+    """Input arguments for updating Product"""
+    class Arguments:
+        id = graphene.ID()
+        price = graphene.String(required=False)
+        language_id = graphene.Int(required=False, name='language')
+        publisher_id = graphene.Int(required=False, name='publisher')
+        book_id = graphene.Int(required=False, name='book')
+        stock_count = graphene.Int(required=False)
+
+    product = graphene.Field(ProductType)
+
+    def mutate(self, info, id, **kwargs):
+        price = kwargs.get('price', None)
+        language_id = kwargs.get('language', None)
+        publisher_id = kwargs.get('publisher', None)
+        book_id = kwargs.get('book', None)
+        stock_count = kwargs.get('stock_count', None)
+
+        product = Product.objects.get(pk=id)
+
+        if price is not None:
+            product.price = price
+
+        if stock_count is not None:
+            product.stock_count = stock_count
+
+        if language_id is not None:
+            try:
+                language = Language.objects.get(pk=language_id)
+            except Language.DoesNotExist:
+                language = None
+            product.language = language
+
+        if publisher_id is not None:
+            try:
+                publisher = Publisher.objects.get(pk=publisher_id)
+            except Publisher.DoesNotExist:
+                publisher = None
+            product.publisher = publisher
+
+        if book_id is not None:
+            try:
+                book = Book.objects.get(pk=book_id)
+            except Book.DoesNotExist:
+                book = None
+            product.book = book
+
+        product.save()
+        return UpdateProductMutation(product=product)
