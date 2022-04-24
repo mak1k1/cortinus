@@ -22,7 +22,7 @@ class CreateAuthorMutation(graphene.Mutation):
         return CreateAuthorMutation(author=author)
 
 
-class EditAuthorMutation(graphene.Mutation):
+class UpdateAuthorMutation(graphene.Mutation):
     class Arguments:
         """Input arguments for editing Author"""
         id = graphene.ID()
@@ -38,4 +38,40 @@ class EditAuthorMutation(graphene.Mutation):
         author.description = description
 
         author.save()
-        return EditAuthorMutation(author=author)
+        return UpdateAuthorMutation(author=author)
+
+class CreateCategoryMutation(graphene.Mutation):
+    class Arguments:
+        """Input arguments for editing Category"""
+        name = graphene.String()
+        description = graphene.String()
+
+    category = graphene.Field(CategoryType)
+
+    def mutate(self, info, name, description):
+        category = Category.objects.create(
+            name=name, 
+            description=description
+        )
+
+        category.save()
+        return CreateCategoryMutation(category=category)
+
+
+class UpdateCategoryMutation(graphene.Mutation):
+    class Arguments:
+        """Input arguments for editing Category"""
+        id = graphene.ID()
+        name = graphene.String()
+        description = graphene.String()
+
+    category = graphene.Field(CategoryType)
+
+    def mutate(self, info, id, name, description):
+        category = Category.objects.get(pk=id)
+
+        category.name = name
+        category.description = description
+
+        category.save()
+        return UpdateCategoryMutation(category=category)

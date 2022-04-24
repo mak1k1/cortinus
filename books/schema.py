@@ -2,7 +2,7 @@ import graphene
 
 from .models import Author, Book, Category
 from .types import AuthorType, BookType, CategoryType
-from .mutations import CreateAuthorMutation, EditAuthorMutation
+from .mutations import CreateAuthorMutation, CreateCategoryMutation, UpdateAuthorMutation, UpdateCategoryMutation
 
 
 class Query(graphene.ObjectType):
@@ -36,7 +36,9 @@ class Query(graphene.ObjectType):
 
 class Mutation(graphene.ObjectType):
     create_author = CreateAuthorMutation.Field()
-    update_author = EditAuthorMutation.Field()
+    update_author = UpdateAuthorMutation.Field()
+    create_category = CreateCategoryMutation.Field()
+    update_category = UpdateCategoryMutation.Field()
 
 
 schema = graphene.Schema(query=Query, mutation=Mutation)
