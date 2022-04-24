@@ -1,4 +1,6 @@
 import graphene
+
+from store.mutations import CreateLanguageMutation, CreateOrderMutation, UpdateLanguageMutation, UpdateOrderMutation
 from .models import Language, Order, OrderItem, Product, Publisher
 from .types import LanguageType, OrderType, OrderItemType, ProductType, PublisherType
 
@@ -51,7 +53,10 @@ class Query(graphene.ObjectType):
 
 
 class Mutation(graphene.ObjectType):
-    pass
+    create_language = CreateLanguageMutation.Field()
+    update_language = UpdateLanguageMutation.Field()
+    create_order = CreateOrderMutation.Field()
+    update_order = UpdateOrderMutation.Field()
 
 
 schema = graphene.Schema(query=Query)
