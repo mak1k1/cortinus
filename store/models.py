@@ -1,4 +1,4 @@
-from logging import makeLogRecord
+from datetime import datetime
 from django.db import models
 
 
@@ -22,7 +22,7 @@ class Publisher(models.Model):
 
 
 class Language(models.Model):
-    code = models.CharField(max_length=10)
+    code = models.CharField(max_length=10, unique=True)
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -45,6 +45,26 @@ class Order(models.Model):
 
     def __str__(self):
         return str(self.created_at)
+
+    def __init__(self, *args, **kwargs):
+        super(Order, self).__init__(*args, **kwargs)
+        self._is_paid = self.is_paid
+        self._is_delivered = self.is_delivered
+
+    def save(self, *args, **kwargs):
+        if not self._is_paid and self.is_paid:
+            self.paid_at = datetime.now()
+            self._is_paid = True
+        if not self._is_delivered and self.is_delivered:
+            self.delivered_at = datetime.now()
+            self._is_delivered = True
+        if self._is_paid and not self.is_paid:
+            self.paid_at = None
+            self._is_paid = False
+        if self._is_delivered and not self.is_delivered:
+            self.delivered_at = None
+            self._is_delivered = False
+        super(Order, self).save(*args, **kwargs)
 
 
 class OrderItem(models.Model):

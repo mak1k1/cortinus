@@ -1,5 +1,3 @@
-from audioop import add
-from re import A
 import graphene
 from .models import Address, User
 from .types import AddressType, UserType
