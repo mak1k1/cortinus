@@ -1,9 +1,10 @@
 import graphene
+from graphql_jwt.decorators import staff_member_required
+
 from .models import Language, Order, OrderItem, Product, Publisher
 from users.models import User
 from books.models import Book
 from .types import LanguageType, OrderType, OrderItemType, ProductType, PublisherType
-
 
 class CreateLanguageMutation(graphene.Mutation):
     """Input arguments for creating Language"""
@@ -13,6 +14,7 @@ class CreateLanguageMutation(graphene.Mutation):
 
     language = graphene.Field(LanguageType)
 
+    @staff_member_required
     def mutate(self, info, code, name):
         language = Language.objects.create(
             code=code,

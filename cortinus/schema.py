@@ -1,4 +1,5 @@
-import graphene, graphql_jwt
+import graphene
+import graphql_jwt
 import users.schema
 import store.schema
 import books.schema
