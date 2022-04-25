@@ -39,7 +39,7 @@ class UpdateUserMutation(graphene.Mutation):
         id = graphene.ID(required=True)
         first_name = graphene.String(required=False)
         last_name = graphene.String(required=False)
-        is_staff = graphene.String(required=False)
+        is_staff = graphene.Boolean(required=False)
         avatar = graphene.String(required=False)
 
     user = graphene.Field(UserType)

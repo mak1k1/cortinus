@@ -1,4 +1,5 @@
 import graphene
+from graphql_jwt.decorators import login_required
 
 from .models import Author, Book, Category
 from .types import AuthorType, BookType, CategoryType
@@ -15,7 +16,11 @@ class Query(graphene.ObjectType):
     categories = graphene.List(CategoryType)
     category = graphene.Field(CategoryType, category_id=graphene.Int())
 
+    @login_required
     def resolve_authors(self, info, **kwargs):
+        user = info.context.user
+        if not user.is_authenticated:
+            raise Exception("Authentication credentials were not provided")
         return Author.objects.all().order_by('-name')
 
     def resolve_author(self, info, author_id):
