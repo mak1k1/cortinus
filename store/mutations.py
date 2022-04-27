@@ -1,5 +1,5 @@
 import graphene
-from graphql_jwt.decorators import staff_member_required
+from graphql_jwt.decorators import staff_member_required, login_required
 
 from .models import Language, Order, OrderItem, Product, Publisher
 from users.models import User
@@ -32,6 +32,7 @@ class UpdateLanguageMutation(graphene.Mutation):
 
     language = graphene.Field(LanguageType)
 
+    @staff_member_required
     def mutate(self, info, id, **kwargs):
         code = kwargs.get('code', None)
         name = kwargs.get('name', None)
@@ -55,6 +56,7 @@ class CreateOrderMutation(graphene.Mutation):
 
     order = graphene.Field(OrderType)
 
+    @login_required
     def mutate(self, info, **kwargs):
         try:
             user_id = kwargs.get('user_id', None)
@@ -80,6 +82,7 @@ class UpdateOrderMutation(graphene.Mutation):
 
     order = graphene.Field(OrderType)
 
+    @staff_member_required
     def mutate(self, info, id, **kwargs):
         shipping_price = kwargs.get('shipping_price', None)
         tax_price = kwargs.get('tax_price', None)
@@ -121,6 +124,7 @@ class CreatePublisherMutation(graphene.Mutation):
 
     publisher = graphene.Field(PublisherType)
 
+    @staff_member_required
     def mutate(self, info, name, description):
         publisher = Publisher.objects.create(
             name=name,
@@ -138,6 +142,7 @@ class UpdatePublisherMutation(graphene.Mutation):
 
     publisher = graphene.Field(PublisherType)
 
+    @staff_member_required
     def mutate(self, info, id, **kwargs):
         name = kwargs.get('name', None)
         description = kwargs.get('description', None)
@@ -165,6 +170,7 @@ class CreateProductMutation(graphene.Mutation):
 
     product = graphene.Field(ProductType)
 
+    @staff_member_required
     def mutate(self, info, price, language_id, publisher_id, book_id, stock_count):
         try:
             language = Language.objects.get(pk=language_id)
@@ -203,6 +209,7 @@ class UpdateProductMutation(graphene.Mutation):
 
     product = graphene.Field(ProductType)
 
+    @staff_member_required
     def mutate(self, info, id, **kwargs):
         price = kwargs.get('price', None)
         language_id = kwargs.get('language_id', None)
@@ -253,6 +260,7 @@ class CreateOrderItemMutation(graphene.Mutation):
 
     orderitem = graphene.Field(OrderItemType)
 
+    @login_required
     def mutate(self, info, product_id, order_id, qty,  image):
         try:
             product = Product.objects.get(pk=product_id)
@@ -285,6 +293,7 @@ class UpdateOrderItemMutation(graphene.Mutation):
 
     orderitem = graphene.Field(OrderItemType)
 
+    @login_required
     def mutate(self, info, id, **kwargs):
         product_id = kwargs.get('product_id', None)
         order_id = kwargs.get('order_id', None)

@@ -1,4 +1,6 @@
 import graphene
+from graphql_jwt.decorators import login_required
+
 from .models import Address, User
 from .types import AddressType, UserType
 
@@ -14,6 +16,7 @@ class CreateUserMutation(graphene.Mutation):
 
     user = graphene.Field(UserType)
 
+    @login_required
     def mutate(self, info, email, **kwargs):
 
         first_name = kwargs.get('first_name', "")
@@ -44,6 +47,7 @@ class UpdateUserMutation(graphene.Mutation):
 
     user = graphene.Field(UserType)
 
+    @login_required
     def mutate(self, info, id, **kwargs):
         email = kwargs.get('email', None)
         first_name = kwargs.get('first_name', None)
@@ -84,6 +88,7 @@ class CreateAddressMutation(graphene.Mutation):
 
     address = graphene.Field(AddressType)
 
+    @login_required
     def mutate(self, info, full_name, street, zip_code, city, country, user_id):
         user = User.objects.get(pk=user_id)
         address = Address.objects.create(
@@ -110,6 +115,7 @@ class UpdateAddressMutation(graphene.Mutation):
 
     address = graphene.Field(AddressType)
 
+    @login_required
     def mutate(self, info, id, **kwargs):
         full_name = kwargs.get('full_name', None)
         street = kwargs.get('street', None)
