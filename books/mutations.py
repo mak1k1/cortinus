@@ -1,4 +1,5 @@
 import graphene
+from graphql_jwt.decorators import staff_member_required
 
 from .types import AuthorType, BookType, CategoryType
 from .models import Author, Book, Category
@@ -12,6 +13,7 @@ class CreateAuthorMutation(graphene.Mutation):
 
     author = graphene.Field(AuthorType)
 
+    @staff_member_required
     def mutate(self, info, name, description):
         author = Author.objects.create(
             name=name,
@@ -31,6 +33,7 @@ class UpdateAuthorMutation(graphene.Mutation):
 
     author = graphene.Field(AuthorType)
 
+    @staff_member_required
     def mutate(self, info, id, name, description):
         author = Author.objects.get(pk=id)
 
@@ -49,6 +52,7 @@ class CreateCategoryMutation(graphene.Mutation):
 
     category = graphene.Field(CategoryType)
 
+    @staff_member_required
     def mutate(self, info, name, description):
         category = Category.objects.create(
             name=name,
@@ -68,6 +72,7 @@ class UpdateCategoryMutation(graphene.Mutation):
 
     category = graphene.Field(CategoryType)
 
+    @staff_member_required
     def mutate(self, info, id, name, description):
         category = Category.objects.get(pk=id)
 
@@ -90,6 +95,7 @@ class CreateBookMutation(graphene.Mutation):
 
     book = graphene.Field(BookType)
 
+    @staff_member_required
     def mutate(self, info, title, isbn, pages, description,
                authors, categories):
         book = Book.objects.create(
@@ -130,6 +136,7 @@ class UpdateBookMutation(graphene.Mutation):
 
     book = graphene.Field(BookType)
 
+    @staff_member_required
     def mutate(self, info, id, **kwargs):
         title = kwargs.get('title', None)
         isbn = kwargs.get('isbn', None)
